@@ -1,0 +1,210 @@
+/* Copyright (C) 2011 by Jason Bellamy (j@sonbellamy.com)
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+// default settings
+// if you would like to change the default font size change the font-size on your body instead of these variables. ex, 87.5% = 14px
+$font-size-base: 16px
+$line-height: 1.5
+$font-unit: em
+$border-color: #000000
+$border-style: solid
+
+
+/* Generic mixin to create rhythmed whitespace for the typographic element based on user input
+ * @param $font-size   - size in px
+ * @param $property    - margin / padding
+ * @param $position    - top / bottom
+ * @param $lines       - add nth extran lines of the rhythmed whitespace
+ * @param $border-size - size in px
+ * @param $divisor     - divide the whitepace by nth
+ */
+@mixin line($font-size: 0, $property: 0, $position: 0, $lines: 0, $border-size: 0, $divisor: 0)
+  @if $lines != 0 and $divisor != 0
+    #{$property}-#{$position}: $line-height / static-to-relative($font-size) * $lines / $divisor + $font-unit
+  @else if $border-size != 0
+    #{$property}-#{$position}: $line-height / static-to-relative($font-size) * $lines - static-to-relative($border-size, $font-size) + $font-unit
+  @else if $divisor != 0
+    #{$property}-#{$position}: $line-height / static-to-relative($font-size) / $divisor + $font-unit
+  @else
+    #{$property}-#{$position}: $line-height / static-to-relative($font-size) * $lines + $font-unit
+
+
+/* Creates rhythmed whitespace before or after a fixed height element.
+ * @param $height           - height in px
+ * @param $property         - margin / padding 
+ * @param $lines (optional) - add nth extra lines of the rhythmed whitespace
+ */
+@mixin line-fixed-before($height, $property, $lines: 0)
+  @include line-fixed($height, $property, top, $lines, 0)  
+
+@mixin line-fixed-after($height, $property, $lines: 0)
+  @include line-fixed($height, $property, bottom, $lines, 0)  
+
+
+/* Splits the rhythmed whitespace in half and applies it before and after the fixed height element.
+ * @param $font-size        - size in px
+ * @param $property         - margin / padding 
+ * @param $lines (optional) - add nth extra lines of the rhythmed whitespace
+ */
+@mixin line-fixed-both($height, $property, $lines: 0)
+  @include line-fixed($height, $property, top, $lines, 2)  
+  @include line-fixed($height, $property, bottom, $lines, 2)  
+
+
+/* Creates rhythmed whitespace for a fixed element
+ * @param $height   - height in px
+ * @param $property - margin / padding
+ * @param $position - top / bottom
+ * @param $lines    - add nth extra lines of the rhythmed whitespace
+ * @param $divisor  - divide the whitespace by nth
+ */
+@mixin line-fixed($height: 0, $property: 0, $position: 0, $lines: 0, $divisor: 0)
+  @if $lines != 0 and $divisor != 0
+    #{$property}-#{$position}: static-to-relative( remainder($height) ) / $divisor + ($line-height * $lines) + $font-unit 
+  @else if $divisor != 0
+    #{$property}-#{$position}: static-to-relative(remainder($height)) / $divisor + $font-unit 
+  @else if $lines != 0
+    #{$property}-#{$position}: (static-to-relative(remainder($height)) + $line-height * $lines) + $font-unit 
+  @else
+    #{$property}-#{$position}: static-to-relative(remainder($height)) + $font-unit 
+
+
+/* Splits the rhythmed whitespace in half and applies it before and after the typographic element.
+ * @param $font-size        - size in px
+ * @param $property         - margin / padding 
+ * @param $lines (optional) - add nth extra lines of the rhythmed whitespace
+ * @example line-both(16px, margin) = margin-bottom 0.75em margin-top: 0.75em
+ */
+@mixin line-both($font-size, $property, $lines: 0)
+  @include line($font-size, $property, top, $lines, 0, 2)
+  @include line($font-size, $property, bottom, $lines, 0, 2)
+
+
+/* Creates rhythmed whitespace before or after the typographic element.
+ * option to multiply the computed property to add more whitespace
+ * @param $font-size        - size in px
+ * @param $property         - margin / padding 
+ * @param $lines (optional) - add nth extra lines of the rhythmed whitespace
+ * @example line-before(16px, margin) = margin-top: 1.5em
+ */
+@mixin line-before($font-size, $property, $lines: 1)
+  @include line($font-size, $property, top, $lines, 0)
+
+@mixin line-after($font-size, $property, $lines: 1)
+  @include line($font-size, $property, bottom, $lines, 0)
+
+
+/* Creates rhythmed whitespace before or after the typographic element WITH a border.
+ * @param $font-size    - size in px
+ * @param $property     - margin / padding 
+ * @param $border-size  - size in px
+ * @param $border-style - dashed, dotted, etc
+ * @param border-color  - hex, rgba, hsla
+ * @example line-border-after(16px, margin, 1px, solid, black) = margin-top: 1.5em | border-bottom: 1px solid black
+ */
+@mixin line-border-before($font-size, $property, $border-size, $border-style: $border-style, $border-color: $border-color)
+  @include line($font-size, $property, top, 1, $border-size)
+  @include line-border(top, $border-size, $border-style, $border-color)
+
+@mixin line-border-after($font-size, $property, $border-size, $border-style: $border-style, $border-color: $border-color)
+  @include line($font-size, $property, bottom, 1, $border-size)
+  @include line-border(bottom, $border-size, $border-style, $border-color)
+
+
+/* Creates a custom rhythmed whitespace above or below the typographic element.
+ * option to multiply the computed property to add more whitespace and add a border
+ * @param $font-size        - size in px
+ * @param $property         - margin / padding 
+ * @param $lines (optional) - add nth extra lines of the rhythmed whitespace
+ * @param $border-size      - size in px
+ * @example line-custom-before(16px, margin, 2, 1px) = margin-top: 1.5em
+ */
+@mixin line-custom-before($font-size, $property, $lines, $border-size)
+  @include line($font-size, $property, top, $lines, $border-size)
+  @include line-border(top, $border-size, $border-style, $border-color)
+
+@mixin line-custom-after($font-size, $property, $lines, $border-size)
+  @include line($font-size, $property, top, $lines, $border-size)
+  @include line-border(top, $border-size, $border-style, $border-color)
+
+
+/* Creates a border based on user preference or falls back to default variables if not defined.
+ * @param  $position     - top or bottom
+ * @param  $border-size  - size in px
+ * @param  $border-style - solid, dashed, etc
+ * @pararm $border-color - hex, rgb, rgba, hsla
+ * @example line-border(top, 1px, solid, black) = border-top: 1px solid black
+ */
+@mixin line-border($position: 0, $border-size: $border-size, $border-style: $border-style, $border-color: $border-color)
+  border-#{$position}: $border-size $border-style $border-color
+  
+
+/* Takes a font-size in px and converts it to a relative unit
+ * @param $font-size - size in px
+ * @example font-size(16px) = font-size: 1.5em
+ */
+@mixin font-size($font-size)
+  font-size: static-to-relative($font-size) + $font-unit
+
+
+/* Takes a font-size in px and calculates a unitless line-height 
+ * has an optional $custom-font-size to allow for a larger line-height that you may want to use on h1 or h2 elements
+ * @param $font-size          - size in px
+ * @param $custom-line-height - size in px 
+ * @example line-height(16px) = line-height: 1.5
+ * @example line-height(48px, 48px) = line-height: 1
+ */
+@mixin line-height($font-size, $custom-line-height: 0)
+  @if $custom-line-height != 0
+    line-height: $custom-line-height / $font-size + $font-unit
+  @else
+    line-height: $line-height / static-to-relative($font-size) + $font-unit
+
+
+/* Converts a static unit to relative unit
+ * @param $target the the px unit we want the relative unit for
+ * @param $context the base-units parent-unit 
+ * @return int the calculated relative number
+ */
+@function static-to-relative($target, $context: 0)
+  @if $context != 0
+    @return (1 / $context * $target)
+  @else
+    @return (1 / $font-size-base * $target)
+
+
+/* Converts a relative unit to static unit
+ * @param $context em / rem
+ */
+@function relative-to-static($context)
+  @return ($font-size-base / 1em ) * ($context / 1px)
+
+
+/* Calculates 1 multiple of the baseline above the number provided and returns the remainder
+ * @param $height - height in px
+ * @example remainder(100) = 20
+ * @return int 
+@function remainder($height)
+  $x: $line-height * $font-size-base
+  //sass handles "while" loops very slowly, so we have to improvise with a for loop
+  @for $i from 1 through 9999
+    $result: $x * $i
+    @if $result > $height
+      @return $result - $height
