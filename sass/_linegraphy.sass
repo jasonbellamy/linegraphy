@@ -161,8 +161,8 @@ $border-style: solid
  * @example line-font(16px) = font-size: 1.5em / line-height: 1.5em
  */
 @mixin line-font($font-size)
-  font-size: static-to-relative($font-size) + $font-unit
-  line-height: $line-height / static-to-relative($font-size) + $font-unit
+  @include font-size($font-size)
+  @include line-height($font-size)
 
 
 /* Takes a font-size in px and converts it to a relative unit
