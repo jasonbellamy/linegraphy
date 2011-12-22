@@ -156,6 +156,15 @@ $border-style: solid
   border-#{$position}: $border-size $border-style $border-color
   
 
+/* Takes a font-size in px and sets the font-size & line-height in relative units
+ * @param $font-size - size in px
+ * @example line-font(16px) = font-size: 1.5em / line-height: 1.5em
+ */
+@mixin line-font($font-size)
+  font-size: static-to-relative($font-size) + $font-unit
+  line-height: $line-height / static-to-relative($font-size) + $font-unit
+
+
 /* Takes a font-size in px and converts it to a relative unit
  * @param $font-size - size in px
  * @example font-size(16px) = font-size: 1.5em
