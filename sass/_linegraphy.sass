@@ -28,12 +28,12 @@ $border-style: solid
 
 
 /* Generic mixin to create rhythmed whitespace for the typographic element based on user input
- * @param $font-size   - size in px
- * @param $property    - margin / padding
- * @param $position    - top / bottom
- * @param $lines       - add nth extran lines of the rhythmed whitespace
+ * @param $font-size - size in px
+ * @param $property  - margin / padding
+ * @param $position  - top / bottom
+ * @param $lines - add nth extra lines of the rhythmed whitespace (accepts decimal points)
  * @param $border-size - size in px
- * @param $divisor     - divide the whitepace by nth
+ * @param $divisor - divide the whitepace by nth
  */
 @mixin line($font-size: 0, $property: 0, $position: 0, $lines: 0, $border-size: 0, $divisor: 0)
   @if $lines != 0 and $divisor != 0
@@ -43,7 +43,7 @@ $border-style: solid
   @else if $divisor != 0
     #{$property}-#{$position}: $line-height / static-to-relative($font-size) / $divisor + $font-unit
   @else
-    #{$property}-#{$position}: $line-height / static-to-relative($font-size) * $lines + $font-unit
+    #{$property}-#{$position}: $lines * ( $line-height / static-to-relative($font-size) ) + $font-unit
 
 
 /* Creates rhythmed whitespace before or after a fixed height element.
