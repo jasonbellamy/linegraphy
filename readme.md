@@ -1,3 +1,8 @@
+# Deprecated
+This project is deprecated and only remains for historical reasons.
+
+---
+
 # Linegraphy
 A typographic SASS extension to help you easily maintain vertical-rhythm in your projects. 
 
